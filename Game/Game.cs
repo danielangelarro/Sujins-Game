@@ -212,10 +212,12 @@ namespace SujinsLogic
 
             if (MonsterDefender.IsDead())
             {
-                if (Status.Turn == 0)
-                    Status.MonstersP1[id].IsActive = false;
-                else
-                    Status.MonstersP2[id].IsActive = false;                   
+                // if (Status.Turn == 0)
+                //     Status.MonstersP1[id].IsActive = false;
+                // else
+                //     Status.MonstersP2[id].IsActive = false;
+                
+                MonsterDefender.IsActive = false;
             }
 
             FinishAction = true;
@@ -376,7 +378,6 @@ namespace SujinsLogic
                 TypeAction.MoveMonsterToCamp
             };
 
-            Random rand = new Random();
 
             if (!IsValidMovement(2))
             {
@@ -397,7 +398,10 @@ namespace SujinsLogic
                 return;
             }
 
-            if (rand.Next() % 3 == 0)
+            Random rand = new Random();
+            int option = rand.Next();
+
+            if (option % 3 == 0)
             {
                 Random rnd = new Random();
                 int cant = Status.MagicsP2.Count;
