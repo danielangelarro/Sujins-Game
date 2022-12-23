@@ -1,0 +1,26 @@
+Card 'Nombre' {
+    description = 'Incrementa en 50 el hp de la tercera carta';
+    price = 23;
+    position = 2;
+    image = 'Card10.png';
+
+    $IncrementHP(1, 50);
+};
+
+Card 'Carta2' {
+    description = 'Incrementa en 120 el hp de la segunda carta';
+    price = 23;
+    position = 1;
+    image = 'Card11.png';
+
+    $IncrementHP(1, 120);
+};
+
+Card 'Cart3' {
+    description = 'Incrementa en 12 el hp de la primera carta';
+    price = 23;
+    position = 0;
+    image = 'Card17.png';
+
+    $IncrementHP(1, 12);
+};
