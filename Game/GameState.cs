@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System;
 using System.Collections.Generic;
 
@@ -49,7 +50,10 @@ namespace SujinsLogic
 
         public bool IsLosser(int player)
         {
-            return player == 1 ? this.MonstersP1.Count == 0 : this.MonstersP2.Count == 0;
+            if (player == 1)
+                return !MonstersP1.Exists(card => !card.IsDead());
+            
+            return !MonstersP2.Exists(card => !card.IsDead());
         }
 
         public int GetStatusOfMonsters(int player)
