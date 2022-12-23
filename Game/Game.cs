@@ -429,7 +429,7 @@ namespace SujinsLogic
             {
                 foreach (MonsterCard monster in Status.MonstersP1)
                 {
-                    if (monster.HealtPoints < state)
+                    if (monster.IsActive && monster.HealtPoints < state)
                     {
                         state = monster.HealtPoints;
                         card = monster;
@@ -440,7 +440,7 @@ namespace SujinsLogic
             {
                 foreach (MonsterCard monster in Status.MonstersP2)
                 {
-                    if (monster.HealtPoints > state)
+                    if (monster.IsActive && monster.HealtPoints > state)
                     {
                         state = monster.HealtPoints;
                         card = monster;
