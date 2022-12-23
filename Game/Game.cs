@@ -1,4 +1,6 @@
-﻿using System;
+using System.Reflection.Metadata;
+using System.Net;
+using System;
 using System.Collections.Generic;
 
 using System.Linq;
@@ -376,7 +378,7 @@ namespace SujinsLogic
 
             Random rand = new Random();
 
-            if (!Status.MonstersP2.Exists(card => card.IsActive))
+            if (!IsValidMovement(2))
             {
                 Console.Clear();
                 Console.WriteLine("Jugador Virtual ha colocado una carta en el campo.");
@@ -384,7 +386,7 @@ namespace SujinsLogic
 
                 for (int i = 0; i < Status.MonstersP2.Count; i++)
                 {
-                    if (!Status.MonstersP2[i].IsActive)
+                    if (!Status.MonstersP2[i].IsDead() && !Status.MonstersP2[i].IsActive)
                     {
                         Actions(TypeAction.MoveMonsterToCamp, 2, i);
 
