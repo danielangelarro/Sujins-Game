@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using SujinsCards;
 using SujinsLogic;
 
@@ -163,6 +164,9 @@ public partial class SujinsGame
                 if (!card.IsActive)
                     Console.WriteLine(card.ToString());
             }
+        
+        if (player == 2 && game.Mode == "AI")
+            return;
         
         Console.WriteLine($"***Seleccione la acción a realizar (Jugador {player})***\n");
         
