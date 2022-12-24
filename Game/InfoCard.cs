@@ -5,6 +5,9 @@ using SujinsCards;
 
 namespace SujinsLogic
 {
+    /// <summary>
+    /// Tablero que muestra la informacion de una carta
+    /// </summary>
     public class InfoCard
     {
         public string Name { get; private set; }
@@ -15,6 +18,9 @@ namespace SujinsLogic
         public string Deffense { get; private set; }
         public string TypeCard { get; private set; }
 
+        /// <summary>
+        /// Actualiza el tablero con la infoprmacion de una carta
+        /// </summary>
         public void UpdateInfo(ICard card, string type)
         {
             ClearInfo();
@@ -26,6 +32,9 @@ namespace SujinsLogic
                 UpdateInfoMagic((MagicCard)card);
         }
 
+        /// <summary>
+        /// Vacia la informacion que contiene el tablero
+        /// </summary>
         private void ClearInfo()
         {
             this.Name = "-";
@@ -37,6 +46,9 @@ namespace SujinsLogic
             this.TypeCard = "-";
         }
 
+        /// <summary>
+        /// Actualiza el tablero con la infoprmacion de una carta de tipo monstruo
+        /// </summary>
         private void UpdateInfoMonster(MonsterCard card)
         {
             List<string> info = card.GetInfo;
@@ -50,6 +62,9 @@ namespace SujinsLogic
             this.TypeCard = info[7];
         }
 
+        /// <summary>
+        /// Actualiza el tablero con la infoprmacion de una carta magica
+        /// </summary>
         private void UpdateInfoMagic(MagicCard card)
         {
             List<string> info = card.GetInfo;

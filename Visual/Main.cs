@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using SujinsLogic;
 
 namespace Sujins.Visual;
@@ -177,7 +177,7 @@ public partial class SujinsGame
             {
                 PrintGameCamp(game.Status.Turn);
 
-                Console.WriteLine("El jugador virtual esta pensando su jugada...");
+                Console.WriteLine("\nEl jugador virtual esta pensando su jugada...");
                 Thread.Sleep(2000);
 
                 game.BotPlay();

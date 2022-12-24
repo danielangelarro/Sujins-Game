@@ -14,6 +14,34 @@ namespace SujinsCards
 
         public MonsterCard() { }
 
+        /// <summary>
+        /// Crea una nueva carta monstruo.
+        /// </summary>
+        /// <param value="name">
+        /// Nombre de la carta.
+        /// </param>
+        /// <param value="description">
+        /// Breve descripcion de las acciones que realiza la carta.
+        /// </param>
+        /// <param value="price">
+        /// Precio en la tienda de la carta.
+        /// </param>
+        /// <param value="image">
+        /// Direccion donde se guarda la imagen asociada a la carta.
+        /// </param>
+        /// <param value="atack">
+        /// Poder de ataque del monstruo.
+        /// </param>
+        /// <param value="defense">
+        /// Poder defensivo del monstruo.
+        /// </param>
+        /// <param value="type">
+        /// Tipo de elemento que representa el monstruo, puede ser de agua, aire, etc.
+        /// </param>
+        /// <param value="hp">
+        /// Cantidad de puntos de vida que posee el monstruo. Inicialmente
+        /// se inicializan en 100 a menos que decidan ser cambiados.
+        /// </param>
         public MonsterCard(string name, string description, int price, string image, int atack,
             int defense, TypeMonsterElement type, int hp = 100)
         {
@@ -28,13 +56,24 @@ namespace SujinsCards
             this.MaxHealtPoint = hp;
         }
         
+        /// <summary>
+        /// Direccion donde se encuentra almacenada la imagen asociada
+        /// a la carta de monstruo actual.
+        /// </summary>
         public string ImageDir => "./Assest/img/image_card/" + this.Image;
 
+        /// <summary>
+        /// Verifica si la vida del monstruo es menor q 0,
+        /// para saber si debe ser eliminado de la partida 
+        /// </summary>
         public bool IsDead()
         {
             return this.HealtPoints <= 0;
         }
 
+        /// <summary>
+        /// Retorna una lista con las propiedades del monstruo
+        /// </summary>
         public List<string> GetInfo
         {
             get {
@@ -53,6 +92,12 @@ namespace SujinsCards
             }
         }
 
+        /// <summary>
+        /// Aumenta o disminuye la vida del montruo.
+        /// </summary>
+        /// <param value="value">
+        /// Valor por el cual se va a modificar el parametro.
+        /// </param>
         public void UpdateHealtPoints(int value)
         {
             this.HealtPoints += value;
@@ -61,21 +106,43 @@ namespace SujinsCards
                 HealtPoints = 0;
         }
 
+        /// <summary>
+        /// Aumenta o disminuye el ataque del montruo
+        /// </summary>
+        /// <param value="value">
+        /// Valor por el cual se va a modificar el parametro.
+        /// </param>
         public void UpdateAttack(int value)
         {
             this.Attack += value;
         }
 
+        /// <summary>
+        /// Aumenta o disminuye la defensa del montruo
+        /// </summary>
+        /// <param value="value">
+        /// Valor por el cual se va a modificar el parametro.
+        /// </param>
         public void UpdateDeffense(int value)
         {
             this.Defense += value;
         }
 
+        /// <summary>
+        /// Modifica el valor propio caracteristico de la carta actual
+        /// basandose en el hashing representado por su nombre.
+        /// </summary>
         public override int GetHashCode()
         {
             return this.Name.GetHashCode();
         }
 
+        /// <summary>
+        /// Verifica si dos monstruos son iguales
+        /// </summary>
+        /// <param value="obj">
+        /// Objeto por el cual se va a realizar la comparacion.
+        /// </param>
         public override bool Equals(object obj)
         {
             if (obj != null && this.GetType().Equals(obj.GetType()))
@@ -85,7 +152,9 @@ namespace SujinsCards
             return false;
         }
 
-
+        /// <summary>
+        /// Devuele un nuevo monstruo con las mismas propiedades que este
+        /// </summary>
         public MonsterCard Clone()
         {
             MonsterCard clone = new MonsterCard();
@@ -103,6 +172,10 @@ namespace SujinsCards
             return clone;
         }
 
+        /// <summary>
+        /// Muestra las propiedades de una carta y la forma en la
+        /// que se va a ver en consola la misma
+        /// </summary>
         public override string ToString()
         {
             string text = "";
@@ -119,6 +192,9 @@ namespace SujinsCards
             return text;
         }
 
+        /// <summary>
+        /// Muestra como se va a ver en la consola la descripcion de la carta
+        /// </summary>
         public string InfoToString()
         {
             string text = this.ToString();

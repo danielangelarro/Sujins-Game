@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace SujinsCards
 {
+    /// <summary>
+    /// Elementos que pueden tomar los diferentes tipos de monstruos.
+    /// </summary>
     public enum TypeMonsterElement
     {
         Water,
@@ -53,6 +56,14 @@ namespace SujinsCards
         float IncrementValue;
         float DecrementValue;
 
+        /// <summary>
+        /// Constructor de la clase.
+        /// </summary>
+        /// <remarks>
+        /// Se encarga de inicializar los distintos valores, asi como de organizar
+        /// la relacion de fuerza y debilidad de los distintos elementos con respecto
+        /// a los demas.
+        /// </remarks>
         public MonsterElements()
         {
             EffectiveAttack = new int[,] {
@@ -75,6 +86,16 @@ namespace SujinsCards
             DecrementValue = 0.7f;
         }
 
+        /// <summary>
+        /// Compara la efectividad del ataque de un mostruo contra otro
+        /// revisando el tipo de cada uno
+        /// </summary>
+        /// <param value="m1">
+        /// Elemento del primer monstruo a comparar.
+        /// </param>
+        /// <param value="m2">
+        /// Elemento del 2do monstruop a comparar.
+        /// </param>
         public float ComparerElements(TypeMonsterElement m1, TypeMonsterElement m2)
         {
             int value = EffectiveAttack[ElementID[m1], ElementID[m2]];

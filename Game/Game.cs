@@ -1,4 +1,4 @@
-using System.Reflection.Metadata;
+﻿using System.Reflection.Metadata;
 using System.Net;
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,13 @@ using SujinsInterpreter;
 
 namespace SujinsLogic
 {
+    /// <summary>
+    /// Acciones que puede realizar un jugador durante una partida
+    /// </summary>
+    /// <remarks>
+    /// Hereda de la clase Config por lo que se adapta a las configuraciones\
+    /// declaradas globales
+    /// </remarks>
     public enum TypeAction
     {
         None,
@@ -25,17 +32,29 @@ namespace SujinsLogic
         GetMagicCards
     }
     
+    /// <summary>
+    /// Clase encargada de controlar toda la logica relacionada al juego.
+    /// </summary>
     public class Game : Config
     {
-        public GameState Status;
-        public string Mode { get; }
+        public GameState Status;    // Estado actual del juego
+        public string Mode { get; } //Modo de juego pvp o single players 
 
+        // Indica si se escogio un monstruo, en caso de realizar un ataque
         public bool SelectObjective { private set; get; }
+
+        //Indica si ya se realizo una accion durante el turno
         public bool FinishAction { private set; get; }
 
-        public MonsterCard MonsterAttack;
-        public MonsterCard MonsterDefender;
+        public MonsterCard MonsterAttack;       // Guarda la referrencia del monstruo atacante
+        public MonsterCard MonsterDefender;     // Guarda la referencai del monstruo defensor
 
+        /// <summary>
+        /// Clase constructora del juego
+        /// </summary>
+        /// <param value="mode">
+        /// Modo del juego. Puede ser pvp(2 jugadores) o AI(contra pc)
+        /// </param>
         public Game(string mode) : base("Debug")
         {
             Status = new GameState();
@@ -45,6 +64,11 @@ namespace SujinsLogic
 
         #region Auxiliar Methods
 
+        /// <summary>
+        /// Comprueba si pueden ser realizados movimientos de tipo ataque o uso
+        /// de cartas magicas. Esto solo e posible en el caso de que se encuentren
+        /// cartas de tipo monstruos puestas en el campo de batalla.
+        /// </summary>
         public bool IsValidMovement(int player)
         {
             if (player == 1)
@@ -52,6 +76,9 @@ namespace SujinsLogic
             return Status.MonstersP2.Exists(card => card.IsActive);
         }
 
+        /// <summary>
+        /// Devuelve las cartas magicas que puede usar el player durante el turno
+        /// </summary>
         private List<MagicCard> GetMagicCardsHand()
         {
             List<MagicCard> hand = new List<MagicCard>();
@@ -71,6 +98,9 @@ namespace SujinsLogic
             return hand;
         }
 
+        /// <summary>
+        /// Verifica si la partida ha concluido.
+        /// </summary>
         private bool IsGameOver()
         {
             return Status.IsLosser(1) || Status.IsLosser(2);
@@ -84,6 +114,12 @@ namespace SujinsLogic
         private int MonsterCardID2 = 0;
         private int CantOfCards = Boveda.PublicMonsterDeck.Count;
 
+        /// <summary>
+        /// Retorna el monstruo escogido por el player
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         public MonsterCard GetMonsterSelect(int player)
         {
             if (player == 1)
@@ -92,6 +128,12 @@ namespace SujinsLogic
             return Boveda.PublicMonsterDeck[MonsterCardID2];
         }
 
+        /// <summary>
+        /// Retorna la direccion de la imagen asociada a la carta seleccionada.
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         public string ShowMonster(int player)
         {
             string dir = Config.MediaBase + "image_card/";
@@ -102,6 +144,12 @@ namespace SujinsLogic
             return dir + Boveda.PublicMonsterDeck[MonsterCardID2].Image;
         }
 
+        /// <summary>
+        /// Pasa a la siguiente carta monstruo disponible para su eleccion
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         public void NextCard(int player)
         {
             if (player == 1)
@@ -110,6 +158,12 @@ namespace SujinsLogic
                 MonsterCardID2 = (MonsterCardID2 + 1) % CantOfCards;
         }
 
+        /// <summary>
+        /// Pasa a la carta anterior de monstruo disponible para su eleccion.
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         public void PrevCard(int player)
         {
             if (player == 1)
@@ -118,6 +172,13 @@ namespace SujinsLogic
                 MonsterCardID2 = (MonsterCardID2 + CantOfCards - 1) % CantOfCards;
         }
 
+        /// <summary>
+        /// Adiciona la carta escogida a los monstruos que participaran en la batalla
+        /// del bando del player.
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         public void SelectCard(int player)
         {
             if(player == 1)
@@ -126,6 +187,12 @@ namespace SujinsLogic
                 Status.MonstersP2.Add(Boveda.PublicMonsterDeck[MonsterCardID2].Clone());
         }
         
+        /// <summary>
+        /// Elimina el monstruo seleccionado
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         public void RemoveCard(int player)
         {
             if(player == 1)
@@ -134,6 +201,15 @@ namespace SujinsLogic
                 Status.MonstersP2.Remove(Boveda.PublicMonsterDeck[MonsterCardID2]);
         }
 
+        /// <summary>
+        /// Elimina un monstruo de la mano del jugador determinado por su indice
+        /// </summary>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="id">
+        /// Indice que ocupa el monstruo a eliminar en la mano del jugador
+        /// </param>
         public void SelectCardOfHand(int player, int id)
         {
             if (player == 1)
@@ -152,6 +228,12 @@ namespace SujinsLogic
 
         #region Game Logic
         
+        /// <summary>
+        /// Pasa al siguiente turno y reinicia todas las acciones realizadas en el turno actual
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
         public void NextTurn(GameState Status)
         {
             Status.Turn = (Status.Turn + 1) % 2;
@@ -162,6 +244,20 @@ namespace SujinsLogic
             Actions(TypeAction.GetMagicCards, Status.Turn + 1, 0);
         }
     
+        /// <summary>
+        /// Se mueve el monstruo seleccionado hacia el campo y se actualiza la 
+        /// variable FinishAction para indicar que ya se realizo una
+        /// durante la partida
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="id">
+        /// Indica el indice del MOnstruo sobre el que se va a ejecutar la accion.
+        /// </param>
         private void MoveMonsterToCamp(GameState Status, int player, int id)
         {
             if (player == 1)
@@ -172,6 +268,23 @@ namespace SujinsLogic
             FinishAction = true;
         }
 
+        /// <summary>
+        /// Cuando se va a realizar un ataque se necesita saber el monstruo
+        /// con el cual se va a atacar y sobre el cual se va a realizar el 
+        /// ataque, este metodo se llama dos veces la primera para guardar en 
+        /// MonsterAttack la carta con la que se va a realizar el ataque y la
+        /// segunda para guardar en en MonsterDeffense sobre el cual se va a realizar
+        /// ataque y ejecutar la accion
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="id">
+        /// Indica el indice del MOnstruo sobre el que se va a ejecutar la accion.
+        /// </param>
         public void SelectMonsterCard(GameState Status, int player, int id) 
         {
             if (!SelectObjective && player == Status.Turn + 1)
@@ -201,6 +314,17 @@ namespace SujinsLogic
             }
         }
 
+        /// <summary>
+        /// Una vez seleccionado los monstruos con los cuales se va a realizar
+        /// el ataque este metodo lo ejecuta, verifica si el monstruo atacado murio
+        /// e indica con FinishAction que ya se realizo la accion
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
+        /// <param value="id">
+        /// Indica el indice del MOnstruo sobre el que se va a ejecutar la accion.
+        /// </param>
         private void ActionMonsterAttack(GameState Status, int id)
         {
             int attack = MonsterAttack.Attack;
@@ -212,17 +336,26 @@ namespace SujinsLogic
 
             if (MonsterDefender.IsDead())
             {
-                // if (Status.Turn == 0)
-                //     Status.MonstersP1[id].IsActive = false;
-                // else
-                //     Status.MonstersP2[id].IsActive = false;
-                
                 MonsterDefender.IsActive = false;
             }
 
             FinishAction = true;
         }
 
+        /// <summary>
+        /// Ejecuta el efecto de una carta magica. Verifica que la carta sobre
+        /// la cual se va a aplicar esta en el campo y si es asi le pasa el
+        /// el codigo al interprete que es el encargado de ejecutarlo
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="id">
+        /// Indica el indice de la carta magica que se va a autilizar.
+        /// </param>
         private void MagicUsage(GameState Status, int player, int id)
         {
             MagicCard card = (player == 1) ? Status.MagicsP1[id] : Status.MagicsP2[id];
@@ -252,13 +385,27 @@ namespace SujinsLogic
 
             Interpreter interprete = new Interpreter(parser, thisMonster, enemyMonster);
 
-            // TODO: Corregir metodo interpreter.interpret()
-
             interprete.GetCards();
 
             FinishAction = true;
         }
 
+        /// <summary>
+        /// Muestra la informacion asociada a una carta. La informacion se guarda
+        /// en la variable `TableOfInfo` del estado del juego.
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="id">
+        /// Indica el indice de la carta magica que se va a autilizar.
+        /// </param>
+        /// <param value="type">
+        /// Tipo de carta. Puede ser de monstruo o magica.
+        /// </param>
         private void ShowInfoCard(GameState Status, int player, int id, string type)
         {
             if (player == 1)
@@ -280,6 +427,15 @@ namespace SujinsLogic
             }
         }
 
+        /// <summary>
+        /// Retorna las cartas magicas que puede usar el player durante el turno.
+        /// </summary>
+        /// <param value="Status">
+        /// Estado actual del juego.
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
         private void GetMagicCards(GameState Status, int player)
         {
             if (player == 1)
@@ -293,11 +449,47 @@ namespace SujinsLogic
 
         #region Ejecute Actions
 
+        /// <summary>
+        /// Ejecuta las distintas acciones que se pueden realizar durante
+        /// un turno. LLama a una sobrecarga del metodo pasandole como referencia
+        /// el estado actual que posee el juego.
+        /// </summary>
+        /// <param value="action">
+        /// Accion que se quiere realizar.
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="cardId">
+        /// Indica el indice de la carta magica que se va a autilizar.
+        /// </param>
+        /// <param value="type">
+        /// Tipo de carta. Puede ser de monstruo o magica.
+        /// </param>
         public void Actions(TypeAction action, int player, int cardId, string type="")
         {
             ActionsManager(action, player, cardId, Status, type);
         }
 
+        /// <summary>
+        /// Ejecuta las distintas acciones que se pueden realizar durante
+        /// un turno.
+        /// </summary>
+        /// <param value="action">
+        /// accion que se va a realizar
+        /// </param>
+        /// <param value="player">
+        /// Indica el indice del jugador con el que interactua en ese momento.
+        /// </param>
+        /// <param value="cardId">
+        /// Indica el indice de la carta magica que se va a autilizar.
+        /// </param>
+        /// <param value="status">
+        /// Estado actual del juego sobre el que se va a realizar la accion.
+        /// </param>
+        /// <param value="type">
+        /// Tipo de carta. Puede ser de monstruo o magica.
+        /// </param>
         public string ActionsManager(TypeAction action, int player, int cardId, GameState status, string type="")
         {
             switch (action)
@@ -358,6 +550,9 @@ namespace SujinsLogic
 
         #region Bot
 
+        /// <summary>
+        /// Carga los monstruos que usara el jugador virtual en la partida.
+        /// </summary>
         public void BotLoadMonsterCards()
         {
             Random rand = new Random();
@@ -370,15 +565,20 @@ namespace SujinsLogic
             }
         }
 
+        /// <summary>
+        /// Ejecuta una jugada correspondiente al jugador virtual.
+        /// </summary>
         public void BotPlay()
         {
+            // Acciones que puede realizar el jugador virtual
             TypeAction[] actions = {
                 TypeAction.MonsterAttack,
                 TypeAction.MagicUsage,
                 TypeAction.MoveMonsterToCamp
             };
 
-
+            // Si no tiene monstruos en el campo se le impide realizar otras acciones y se le obliga
+            // a colocar uno que no este muerto.
             if (!IsValidMovement(2))
             {
                 Console.Clear();
@@ -397,6 +597,9 @@ namespace SujinsLogic
 
                 return;
             }
+
+            // En caso de que tenga monstruos en el campo utiliza una carta magica cada
+            // cierta cantidad de turnos aleatorios. En caso contrario ejecuta un ataque.
 
             Random rand = new Random();
             int option = rand.Next();
@@ -426,6 +629,12 @@ namespace SujinsLogic
             }
         }
 
+        /// <summary>
+        /// Localiza su monstruo con mayor poder de ataque y el monstruo enemigo con menor poder de defensa.
+        /// </summary>
+        /// <param value="player">
+        /// Player asociado a la accion.
+        /// </param>
         private MonsterCard GetMonsterCard(int player)
         {
             MonsterCard card = new MonsterCard();

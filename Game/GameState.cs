@@ -12,19 +12,31 @@ using SujinsCards;
 
 namespace SujinsLogic
 {
+    /// <summary>
+    /// Guarda el estado actual del juego.
+    /// </summary>
     public class GameState
     {
+        // Monstruos de cada player
         public List<MonsterCard> MonstersP1;
         public List<MonsterCard> MonstersP2;
         
+        // Cartas magicas de cada player
         public List<MagicCard> MagicsP1;
         public List<MagicCard> MagicsP2;
 
+        // Tablero donde se m uestra la informacion asociadas a una carta.
         public InfoCard TableOfInfo;
+
+        // Chat interno donde se muestran las jugadas realizadas
         public string ChatGame;
 
+        // Turno que indica a que jugador le corresponde jugar.
         public int Turn;
 
+        /// <summary>
+        /// Inicializa los valores de las listas.
+        /// </summary>
         public GameState()
         {
             MonstersP1 = new List<MonsterCard>();
@@ -33,6 +45,10 @@ namespace SujinsLogic
             MagicsP2 = new List<MagicCard>();
         }
 
+        /// <summary>
+        /// Devuelve una nueva instancia del estado del juego en caso de que 
+        /// se quieran hacer cambios sin afectar la partida actual
+        /// </summary>
         public GameState Clone()
         {
             GameState newGame = new GameState();
@@ -48,6 +64,10 @@ namespace SujinsLogic
             return newGame;
         }
 
+        /// <summary>
+        /// Verifica si la cantidad de monstruos vivos de un player es 0
+        /// para saber si alguno perdio la partida.
+        /// </summary>
         public bool IsLosser(int player)
         {
             if (player == 1)
@@ -56,6 +76,17 @@ namespace SujinsLogic
             return !MonstersP2.Exists(card => !card.IsDead());
         }
 
+        /// <summary>
+        /// Calcula que tanto beneficia el estado del juego actual a un determinado player.
+        /// </summary>
+        /// <remarks>
+        /// Hace que todos los monstruos de un player ataquen a todos los monstruos del oponente.
+        /// Una vez realizado esto en los 2 bandos se suman los valores de los puntos de vida con lo0s que se quedaron
+        /// los monstruos que aparecen sobre el campo.
+        /// </remarks>
+        /// <return>
+        /// La diferencia entre la puntiuacion del player actual y la del enemigo
+        /// </return>
         public int GetStatusOfMonsters(int player)
         {
             int monsters1 = 0;

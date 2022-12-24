@@ -17,6 +17,28 @@ namespace SujinsCards
 
         public MagicCard() { }
 
+        /// <summary>
+        /// Crea una nueva carta magica.
+        /// </summary>
+        /// <param value="name">
+        /// Nombre de la carta magica.
+        /// </param>
+        /// <param value="description">
+        /// Breve descripcion de las acciones que realiza la carta magica.
+        /// </param>
+        /// <param value="price">
+        /// Precio en la tienda de la carta magica.
+        /// </param>
+        /// <param value="image">
+        /// Direccion donde se guarda la imagen asociada a la carta magica.
+        /// </param>
+        /// <param value="action">
+        /// Codigo que repersenta la accion que ejecuta una carta magica al setr invocada.
+        /// </param>
+        /// <param value="position">
+        /// Posicion del monstruo sobre el que tiene incidencia, en caso de ser -1
+        /// puede incidir sobre todos los monstruos que se encuentren en el campo.
+        /// </param>
         public MagicCard(string name, string description, int price, string image, string action, int position)
         {
             this.Name = name;
@@ -27,9 +49,14 @@ namespace SujinsCards
             this.Action = action;
         }
 
+        /// <summary>
+        /// Direccion donde se encuentran guardadas las imagenes de las cartas.
+        /// </summary>
         public string ImageDir => "./Assest/img/image_card/" + this.Image;
 
-        
+        /// <summary>
+        /// Devuelve una copia del objeto para no hacer cambios al original
+        /// </summary>
         public MagicCard Clone()
         {
             return new MagicCard(
@@ -42,6 +69,9 @@ namespace SujinsCards
             );
         }
 
+        /// <summary>
+        /// Retorna una lista con las propiedades de las cartas 
+        /// </summary>
         public List<string> GetInfo
         {
             get {
@@ -55,6 +85,10 @@ namespace SujinsCards
             }
         }
 
+        /// <summary>
+        /// Devuelve un string con la forma en la que se va a ver en consola
+        /// una carta magica
+        /// </summary>
         public override string ToString()
         {
             string text = "";
