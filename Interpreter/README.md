@@ -78,19 +78,21 @@ empty :
 ## EXAMPLE OF CODE
 
 ```
-main{
-    int a = 15, b = 20, c;
-    if ( b > a) {
-        c = a;
-        a = b;
-        b = a;
-    }
-    while (a % b != 0) {
-        int r = a % b;
-        a = b;
-        b = r;
-    }
-    [< This is a comment >]
-    ShowLine(a + ' ' + b + ' ' + c);
-}
+Card 'Nombre' {
+    description = 'Incrementa en 50 el hp de la tercera carta';
+    price = 23;
+    position = 2;
+    image = 'Card10.png';
+
+    $IncrementHP(1, 50);
+};
+
+Card 'Carta2' {
+    description = 'Incrementa en 120 el hp de la segunda carta';
+    price = 23;
+    position = 1;
+    image = 'Card11.png';
+
+    $IncrementHP(1, 120);
+};
 ```
