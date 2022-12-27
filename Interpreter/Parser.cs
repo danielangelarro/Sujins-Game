@@ -3,22 +3,45 @@ using System.Reflection;
 
 namespace SujinsInterpreter
 {
+    /// <summary>
+    /// Clase encargada de parsear y cada instrucción y verificar que cumpla con
+    /// las sintaxis requerida en cada caso.
+    /// </summary>
     public class Parser
     {
-        private Lexer Lexer;
-        private Token CurrentToken;
+        private Lexer Lexer;    // estructura que me permite acceder a cada token presente en el código.
+        private Token CurrentToken; // Token actual
 
+        /// <summary>
+        /// Constructor de la clase.
+        /// </summary>
+        /// <param name="lexer">
+        /// Instancia del lexer formado por el código correspondiente.
+        /// </param>
         public Parser(Lexer lexer)
         {
             Lexer = lexer;
             CurrentToken = lexer.GetNextToken();
         }
 
-        private void Error(string error = "Caracter inválido")
+        /// <summary>
+        /// Retorna un error de sintaxis en caso de que este ocurra mostrando la línea donde ocurrió dicho error.
+        /// </summary>
+        /// <param name="error">
+        /// Texto alternativo que describe el tipo de error asociado.
+        /// </param>
+        private void Error(string error = "Error de sintaxis")
         {
             throw new Exception($"[Line {Lexer.Line + 1}]: " + error);
         }
 
+        /// <summary>
+        /// Verifica que el token actual sea igual al esperado para cumplir con la gramática
+        /// de la sintaxis y pasa al siguiente token. en caso contrario lanza una excepción.
+        /// </summary>
+        /// <param name="type">
+        /// Token esperado.
+        /// </param>
         private void Process(TokenTypes type)
         {
             if (CurrentToken.Type == type)
@@ -30,6 +53,12 @@ namespace SujinsInterpreter
                 Error($"Sintaxis Error: Se esperaba '{type.ToString()}' y se obtuvo '{CurrentToken.Type.ToString()}'.");
         }
 
+        /// <summary>
+        /// Verifica que cada posible factor cumpla con las sintaxis requeridas.
+        /// </summary>
+        /// <return>
+        /// Devuelve un nodo que representa los distintos tipos de factores que pueden aparecer.
+        /// </return>
         private AST Factor()
         {
             AST node = new AST();
@@ -37,6 +66,7 @@ namespace SujinsInterpreter
 
             switch (token.Type)
             {
+                // Uso de alguna variable
                 case TokenTypes.ID:
 
                     Process(TokenTypes.ID);
@@ -45,7 +75,8 @@ namespace SujinsInterpreter
 
                     break;
 
-                case TokenTypes.PLUS:
+                // Número positivo, factor unario de la forma +5
+                case TokenTypes.PLUS:   
 
                     Process(TokenTypes.PLUS);
 
@@ -53,7 +84,8 @@ namespace SujinsInterpreter
 
                     break;
 
-                case TokenTypes.MINUS:
+                // Número negativo, factor unario de la forma -5
+                case TokenTypes.MINUS: 
 
                     Process(TokenTypes.MINUS);
 
@@ -61,6 +93,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Número entero
                 case TokenTypes.INTEGER:
 
                     Process(TokenTypes.INTEGER);
@@ -69,6 +102,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Número de tipo flotante
                 case TokenTypes.FLOAT:
 
                     Process(TokenTypes.FLOAT);
@@ -77,6 +111,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Valor de expreesión booleano.
                 case TokenTypes.BOOLEAN:
 
                     Process(TokenTypes.BOOLEAN);
@@ -85,6 +120,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Valor de una cadena de caracteres.
                 case TokenTypes.STRING:
 
                     Process(TokenTypes.STRING);
@@ -93,6 +129,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Uso de la palabra reservada `True`
                 case TokenTypes.TRUE:
 
                     Process(TokenTypes.TRUE);
@@ -101,6 +138,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Uso de la palabra reservada `False`
                 case TokenTypes.FALSE:
 
                     Process(TokenTypes.FALSE);
@@ -109,6 +147,7 @@ namespace SujinsInterpreter
 
                     break;
 
+                // Uso de los paréntesis. Valida que siempre que sea abirto uno tiene que cerrarse de nuevo.
                 case TokenTypes.L_PARENT:
 
                     Process(TokenTypes.L_PARENT);
@@ -123,6 +162,13 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica que cada posible término cumpla con las sintaxis requeridas.  Un termino esta formdo por uno
+        /// o más factores y una operación asociada (*, /, //, %).
+        /// </summary>
+        /// <returns>
+        /// Devuelve un nodo que representa los distintos tipos de nodos que pueden aparecer.
+        /// </returns>
         private AST Termine()
         {
             AST node = Factor();
@@ -156,6 +202,13 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica que cada posible expresión cumpla con las sintaxis requeridas. Una expresión
+        /// está formada por uno o más terminos separados por operaciones (+, -)
+        /// </summary>
+        /// <returns>
+        /// Devuelve un nodo que representa los distintos tipos de nodos que pueden aparecer.
+        /// </returns>
         private AST Expression()
         {
             AST node = Termine();
@@ -179,6 +232,12 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Comprueba que el token actual sea un símbolo de comparación.
+        /// </summary>
+        /// <returns>
+        /// Verdadero si el token es de tipo comparación y falso en caso contrario.
+        /// </returns>
         private bool IsBooleanOperator()
         {
             Token type = CurrentToken;
@@ -189,6 +248,13 @@ namespace SujinsInterpreter
                     type.Type == TokenTypes.NOX;
         }
 
+        /// <summary>
+        /// Verifica que el nodo represente una expresión de comparación. Una expresión de comparación está
+        /// compuesto por uno o más expresiones separadas por símbolos de comparación.
+        /// </summary>
+        /// <returns>
+        /// Devuelve un nodo que representa los distintos tipos de nodos que pueden aparecer.
+        /// </returns>
         private AST Comparer()
         {
             AST node = Expression();
@@ -233,6 +299,13 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica que el nodo represente una expresión de comparación general. Este tipo de expresión está
+        /// compuesta por uno o más expresiones de comparación separados por operadores de tipo `Y` y `O`.
+        /// </summary>
+        /// <returns>
+        /// Devuelve un nodo que representa los distintos tipos de nodos que pueden aparecer.
+        /// </returns>
         private AST Compounds()
         {
             AST node = Comparer();
@@ -257,11 +330,20 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Representa un nodo de acción vacía, o sea, que no lleva a cabo ningún tipo de acción.
+        /// </summary>
         private AST Empty()
         {
             return new Empty();
         }
 
+        /// <summary>
+        /// Se encarga de verificar si el token actual representa una variable.
+        /// </summary>
+        /// <returns>
+        /// Devuelve un objeto que representa la variable.
+        /// </returns>
         private AST Variable()
         {
             AST node = new Var(CurrentToken);
@@ -270,6 +352,10 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica si el nodo representa un tipo de operación de asignación. Este está 
+        /// compuesta por una variable, el token de asignación y el componente que dará valor a la variable.
+        /// </summary>
         private AST Assignment()
         {
 
@@ -281,6 +367,11 @@ namespace SujinsInterpreter
             return new Assign((Var)node, token, Compounds());
         }
 
+        /// <summary>
+        /// Verifica si se cumple con la estructura que debe llevar una expresión condicional. Esta está
+        /// compuesta por un token IF, un nodo de tipo Compunds encerrado entre paréntesis y una acción
+        /// a ejecutar en caso de que la condición asociada se cumpla que se encuentra dentro de llaves.
+        /// </summary>
         private AST Conditional()
         {
             Process(TokenTypes.IF);
@@ -298,6 +389,12 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica si se cumple con la estructura que debe llevar un ciclo. Esta está
+        /// compuesta por un token WHILE, un nodo de tipo Compunds encerrado entre paréntesis y una acción
+        /// a ejecutar una y otra vez mientras que la condición asociada se cumpla que se encuentra 
+        /// dentro de llaves.
+        /// </summary>
         private AST Cicle()
         {
             Process(TokenTypes.WHILE);
@@ -315,6 +412,12 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica si se hace el llamado a una función interna del intérprete y que cumpla 
+        /// con la sintaxis requerida. Ésta está compuesta por un token que representa el llamado
+        /// a una función, el nombre de la función y entre paréntesis los parámetros que necesita 
+        /// para ejecutarse.
+        /// </summary>
         private AST Function()
         {
             Process(TokenTypes.FUNCTIONS);
@@ -342,6 +445,10 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Verifica si se cumple con la sintaxis de una declaración. Ésta está compuesta por un token 
+        /// representando el tipo de dato y una o mas nombres de variables separados por comas.
+        /// </summary>
         private AST Declaration()
         {
             Declarations declarations = new Declarations();
@@ -363,12 +470,18 @@ namespace SujinsInterpreter
             return declarations;
         }
 
+        /// <summary>
+        /// Verifica que el token actual represente un tipo de dato.
+        /// </summary>
         private bool IsDataType()
         {
             return CurrentToken.Type == TokenTypes.INTEGER || CurrentToken.Type == TokenTypes.FLOAT
                     || CurrentToken.Type == TokenTypes.BOOLEAN || CurrentToken.Type == TokenTypes.STRING;
         }
 
+        /// <summary>
+        /// Verifica si el nodo actual reresenta un tipo de operaciones disponibles en el cuerpo del código.
+        /// </summary>
         private AST Statement()
         {
             AST node = Empty();
@@ -405,6 +518,10 @@ namespace SujinsInterpreter
             return node;
         }
 
+        /// <summary>
+        /// Representa si cumple con los requisitos de una lista de instrucciones separadas por un punto y coma.
+        /// </summary>
+        /// <returns></returns>
         private AST StatementList()
         {
             Instructions instructions = new Instructions();
@@ -419,6 +536,10 @@ namespace SujinsInterpreter
             return instructions;
         }
 
+        /// <summary>
+        /// Verifica que el nodo actual represente un tipo de dato.
+        /// </summary>
+        /// <returns></returns>
         private TokenTypes TypeData()
         {
             TokenTypes token = TokenTypes.INTEGER;
@@ -450,6 +571,12 @@ namespace SujinsInterpreter
             return token;
         }
 
+        /// <summary>
+        /// Verifica que el nodo represente un bloque de acción compuesto por un token que
+        /// representa el comienzo del bloque, el nombre de la carta y la lista de
+        /// instrucciones a realizar dentro de llaves.
+        /// </summary>
+        /// <returns></returns>
         private AST Block()
         {
             Process(TokenTypes.CARD);
@@ -473,6 +600,9 @@ namespace SujinsInterpreter
             return card;
         }
 
+        /// <summary>
+        /// Construye el nodo formado por uno o más bloques de cartas.
+        /// </summary>
         public AST GetCards()
         {
             CardsList cards = new CardsList();
@@ -486,6 +616,10 @@ namespace SujinsInterpreter
             return cards;
         }
 
+        /// <summary>
+        /// Se encarga de verificr que el codigo cumpla con la sintaxis requerida para cada
+        /// bloque de carta específico.
+        /// </summary>
         public AST Parse()
         {
             AST node = Block();

@@ -1,5 +1,8 @@
 namespace SujinsInterpreter
 {
+    /// <summary>
+    /// Tokens que determinan cada fragmento que puede aparecer en el código.
+    /// </summary>
     public enum TokenTypes
     {
         #region Types of Datas
