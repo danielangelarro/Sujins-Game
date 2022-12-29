@@ -7,7 +7,7 @@ namespace SujinsCards
     ///<summary>
     /// Contenedor para guardar las cartas de los jugadores.
     ///</summary>
-    public class Deck<TCard> : ICard, IEnumerable<TCard>
+    public class Deck<TCard> : IEnumerable<TCard>
     {
         private List<TCard> deck;
 
