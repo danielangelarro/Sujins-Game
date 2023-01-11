@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace SujinsInterpreter
 {
     /// <summary>
-    /// Regula y compila las acciones internas del interprete.
+    /// Regula y compila las acciones internas del intérprete.
     /// </summary>
     public class Interpreter : NodeVisitor
     {
