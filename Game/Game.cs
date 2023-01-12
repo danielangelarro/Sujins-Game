@@ -153,9 +153,9 @@ namespace SujinsLogic
         public void NextCard(int player)
         {
             if (player == 1)
-                MonsterCardID1 = (MonsterCardID1 + 1) % CantOfCards;
+                MonsterCardID1 = (MonsterCardID1 + 1) % Boveda.PublicMonsterDeck.Count;
             else
-                MonsterCardID2 = (MonsterCardID2 + 1) % CantOfCards;
+                MonsterCardID2 = (MonsterCardID2 + 1) % Boveda.PublicMonsterDeck.Count;
         }
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace SujinsLogic
         public void PrevCard(int player)
         {
             if (player == 1)
-                MonsterCardID1 = (MonsterCardID1 + CantOfCards - 1) % CantOfCards;
+                MonsterCardID1 = (MonsterCardID1 + Boveda.PublicMonsterDeck.Count - 1) % Boveda.PublicMonsterDeck.Count;
             else
-                MonsterCardID2 = (MonsterCardID2 + CantOfCards - 1) % CantOfCards;
+                MonsterCardID2 = (MonsterCardID2 + Boveda.PublicMonsterDeck.Count - 1) % Boveda.PublicMonsterDeck.Count;
         }
 
         /// <summary>

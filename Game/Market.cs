@@ -79,10 +79,10 @@ namespace SujinsLogic
         public void NextCard(string operation)
         {
             if (operation == "buy")
-                BuyCardID = (BuyCardID + 1) % CantOfCards;
+                BuyCardID = (BuyCardID + 1) % Boveda.PublicMonsterDeck.Count;
 
             else 
-                SellCardID = (SellCardID + 1) % CantCardsPublics;
+                SellCardID = (SellCardID + 1) % Boveda.PublicMonsterDeck.Count;
         }
 
         /// <summary>
@@ -95,10 +95,10 @@ namespace SujinsLogic
         public void PrevCard(string operation)
         {
             if (operation == "buy")
-                BuyCardID = (BuyCardID + CantOfCards - 1) % CantOfCards;
+                BuyCardID = (BuyCardID + Boveda.PublicMonsterDeck.Count - 1) % Boveda.PublicMonsterDeck.Count;
             
             else 
-                SellCardID = (SellCardID + CantOfCards - 1) % CantOfCards;
+                SellCardID = (SellCardID + Boveda.PublicMonsterDeck.Count - 1) % Boveda.PublicMonsterDeck.Count;
         }
 
         /// <summary>
