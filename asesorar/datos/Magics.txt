@@ -1,4 +1,4 @@
-Card 'Nombre' {
+Card 'Elixir de vida mediano' {
     description = 'Incrementa en 50 el hp de la tercera carta';
     price = 23;
     position = 2;
@@ -7,7 +7,7 @@ Card 'Nombre' {
     $IncrementHP(1, 50);
 };
 
-Card 'Carta2' {
+Card 'Elixir de vida grande' {
     description = 'Incrementa en 120 el hp de la segunda carta';
     price = 23;
     position = 1;
@@ -16,7 +16,7 @@ Card 'Carta2' {
     $IncrementHP(1, 120);
 };
 
-Card 'Cart3' {
+Card 'Elixir de vida pequeño' {
     description = 'Incrementa en 12 el hp de la primera carta';
     price = 23;
     position = 0;
