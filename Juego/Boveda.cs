@@ -34,6 +34,7 @@ namespace SujinsLogic
         public static string Load()
         {
             string error = "", msg;
+            this.Coins = 50;
 
             msg = LoadMonsterCards();
             
