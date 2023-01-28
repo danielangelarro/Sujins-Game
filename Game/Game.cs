@@ -38,7 +38,7 @@ namespace SujinsLogic
     public class Game : Config
     {
         public GameState Status;    // Estado actual del juego
-        public string Mode { get; } //Modo de juego pvp o single players 
+        public string Mode { get; } // Modo de juego pvp o single players 
 
         // Indica si se escogio un monstruo, en caso de realizar un ataque
         public bool SelectObjective { private set; get; }
@@ -48,6 +48,8 @@ namespace SujinsLogic
 
         public MonsterCard MonsterAttack;       // Guarda la referrencia del monstruo atacante
         public MonsterCard MonsterDefender;     // Guarda la referencai del monstruo defensor
+
+        protected Bot VirtualPlayer;
 
         /// <summary>
         /// Clase constructora del juego
@@ -60,6 +62,8 @@ namespace SujinsLogic
             Status = new GameState();
             
             this.Mode = mode;
+
+            VirtualPlayer = new Bot();
         }
 
         #region Auxiliar Methods
@@ -548,7 +552,7 @@ namespace SujinsLogic
 
         #endregion
 
-        #region Bot
+        #region PlayerAndBotAction
 
         /// <summary>
         /// Carga los monstruos que usara el jugador virtual en la partida.
@@ -566,7 +570,7 @@ namespace SujinsLogic
         }
 
         /// <summary>
-        /// Ejecuta una jugada correspondiente al jugador virtual.
+        /// Ejecuta una jugada correspondiente al jugador actual.
         /// </summary>
         public void BotPlay()
         {
@@ -577,93 +581,49 @@ namespace SujinsLogic
                 TypeAction.MoveMonsterToCamp
             };
 
-            // Si no tiene monstruos en el campo se le impide realizar otras acciones y se le obliga
-            // a colocar uno que no este muerto.
-            if (!IsValidMovement(2))
-            {
-                Console.Clear();
-                Console.WriteLine("Jugador Virtual ha colocado una carta en el campo.");
-                Console.ReadKey();
+            ActionEjecuteInfo action = VirtualPlayer.Play(Status);
 
-                for (int i = 0; i < Status.MonstersP2.Count; i++)
-                {
-                    if (!Status.MonstersP2[i].IsDead() && !Status.MonstersP2[i].IsActive)
+            switch (action.ActionId)
+            {
+                case 0:
+                    Actions(TypeAction.MoveMonsterToCamp, action.PlayerId, action.MonsterSelfId);
+
+                    Console.Clear();
+                    Console.WriteLine($"Jugador {action.PlayerId} ha colocado un monstruo en el campo.");
+                    Console.ReadKey();
+
+                    break;
+                
+                case 1:
+                    ActionsManager(TypeAction.GetMagicCards, action.PlayerId, 0, Status);
+                    ActionsManager(TypeAction.MagicUsage, action.PlayerId, action.MagicId, Status);
+
+                    Console.Clear();
+                    Console.WriteLine($"Jugador {action.PlayerId} ha usado una carta magica.");
+                    Console.ReadKey();
+
+                    break;
+                
+                case 2:
+                    if (action.PlayerId == 2)
                     {
-                        Actions(TypeAction.MoveMonsterToCamp, 2, i);
-
-                        break;
+                        MonsterAttack = Status.MonstersP2[action.MonsterSelfId];
+                        MonsterDefender = Status.MonstersP1[action.MonsterSelfId];
                     }
-                }
-
-                return;
-            }
-
-            // En caso de que tenga monstruos en el campo utiliza una carta magica cada
-            // cierta cantidad de turnos aleatorios. En caso contrario ejecuta un ataque.
-
-            Random rand = new Random();
-            int option = rand.Next();
-
-            if (option % 3 == 0)
-            {
-                Random rnd = new Random();
-                int cant = Status.MagicsP2.Count;
-
-                ActionsManager(TypeAction.GetMagicCards, 2, 0, Status);
-                ActionsManager(TypeAction.MagicUsage, 2, rnd.Next() % cant, Status);
-
-                Console.Clear();
-                Console.WriteLine("Jugador Virtual ha usado una carta magica.");
-                Console.ReadKey();
-            }
-            else
-            {
-                MonsterAttack = GetMonsterCard(2);
-                MonsterDefender = GetMonsterCard(1);
-
-                ActionsManager(TypeAction.MonsterAttack, 2, 0, Status);
-
-                Console.Clear();
-                Console.WriteLine($"Jugador Virtual ha atacado con {MonsterAttack.Name} a {MonsterDefender.Name}");
-                Console.ReadKey();
-            }
-        }
-
-        /// <summary>
-        /// Localiza su monstruo con mayor poder de ataque y el monstruo enemigo con menor poder de defensa.
-        /// </summary>
-        /// <param value="player">
-        /// Player asociado a la accion.
-        /// </param>
-        private MonsterCard GetMonsterCard(int player)
-        {
-            MonsterCard card = new MonsterCard();
-            int state = player == 1 ? int.MaxValue : 0;
-
-            if (player == 1)
-            {
-                foreach (MonsterCard monster in Status.MonstersP1)
-                {
-                    if (monster.IsActive && monster.HealtPoints < state)
+                    else
                     {
-                        state = monster.HealtPoints;
-                        card = monster;
+                        MonsterAttack = Status.MonstersP1[action.MonsterSelfId];
+                        MonsterDefender = Status.MonstersP2[action.MonsterSelfId];
                     }
-                }
-            }
-            else
-            {
-                foreach (MonsterCard monster in Status.MonstersP2)
-                {
-                    if (monster.IsActive && monster.HealtPoints > state)
-                    {
-                        state = monster.HealtPoints;
-                        card = monster;
-                    }
-                }
-            }
 
-            return card;
+                    ActionsManager(TypeAction.MonsterAttack, action.PlayerId, 0, Status);
+
+                    Console.Clear();
+                    Console.WriteLine($"Jugador {action.PlayerId} ha atacado con {MonsterAttack.Name} a {MonsterDefender.Name}");
+                    Console.ReadKey();
+
+                    break;
+            }
         }
 
         #endregion
